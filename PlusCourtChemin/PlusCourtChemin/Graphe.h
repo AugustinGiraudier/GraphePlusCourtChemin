@@ -38,7 +38,9 @@ public:
 	std::vector<Vertex>* getVertices() { return &this->listeSommets; }
 
 	void Afficher(int nbMax = INT16_MAX);
-	std::vector<double> Dikstra(unsigned int vertexId);
+
+	std::vector<double> DikstraAll(unsigned int from);
+	double Dikstra(unsigned int from, unsigned int to);
 
 };
 

@@ -114,7 +114,7 @@ void Graphe::Afficher(int nbMax)
 	}
 }
 
-std::vector<double> Graphe::Dikstra(unsigned int v1)
+std::vector<double> Graphe::DikstraAll(unsigned int v1)
 {
 
 	// vecteur de retour lambda :
@@ -176,4 +176,70 @@ std::vector<double> Graphe::Dikstra(unsigned int v1)
 	}
 
 	return lambda;
+}
+
+double Graphe::Dikstra(unsigned int v1, unsigned int v2)
+{
+
+	// vecteur de retour lambda :
+	std::vector<double> lambda = std::vector<double>(this->listeSommets.size());
+
+	std::vector<unsigned int> Z = std::vector<unsigned int>();
+	Z.reserve(this->listeSommets.size() - 1);
+	for (unsigned int index = 0; index < this->listeSommets.size(); index++)
+		if (index != v1)
+			Z.emplace_back(index);
+	lambda[v1] = 0;
+
+	for (unsigned int vertID : Z) {
+
+		// recherche d'arrete v1 --> v2
+		Edge* e = getEdgeBetween(v1, vertID);
+
+		// si l'arrete existe :
+		if (e != nullptr)
+			lambda[vertID] = e->valeurs[0];
+		else
+			lambda[vertID] = DBL_MAX;
+	}
+
+	while (!Z.empty()) {
+
+		// récupération du minimum dans lambda avec vert dans Z :
+		int x = 0;
+		{
+			int idInZ = -1;
+			int xInZ = 0;
+			double minVal = DBL_MAX;
+			for (unsigned int vertID : Z) {
+				idInZ++;
+				if (lambda[vertID] <= minVal) {
+					minVal = lambda[vertID];
+					x = vertID;
+					xInZ = idInZ;
+				}
+			}
+			if (Z[xInZ] == v2)
+				return lambda[v2];
+			Z.erase(std::next(Z.begin(), xInZ)); // suppression de x dans Z
+		}
+
+		// pour tous les successeurs de x :
+		for (Edge& e : this->listeAdjacense[x]) {
+			int iId = e.sommetTerminal;
+
+			// s'il appartient à Z :
+			for (unsigned int vertID : Z) {
+				if (vertID == iId) {
+					// si lambda de x + l(x,i) < lambda de i :
+					if (lambda[x] + e.valeurs[0] < lambda[iId])
+						lambda[iId] = lambda[x] + e.valeurs[0];
+					break;
+				}
+			}
+		}
+
+	}
+
+	return -1;
 }
