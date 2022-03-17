@@ -20,6 +20,7 @@ private:
 	int nbSommets;
 	int nbArcs;
 	int nbValeursParArc;
+	int nbValeurParSommet;
 
 	std::vector<Vertex> listeSommets;
 	std::vector<std::list<Edge>> listeAdjacense;

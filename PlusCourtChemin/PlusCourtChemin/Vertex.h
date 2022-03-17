@@ -2,14 +2,15 @@
 #define VERTEX_H
 
 #include <string>
+#include <vector>
 
 class Vertex {
 
-private:
-	std::string nom;
-
 public:
-	Vertex(std::string nom);
+	std::string nom;
+	std::vector<double> values;
+
+	Vertex(std::string nom, std::vector<double> values);
 	std::string toString();
 };
 #endif

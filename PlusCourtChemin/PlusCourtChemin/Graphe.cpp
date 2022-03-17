@@ -25,7 +25,7 @@ Graphe::Graphe(std::string filePath) {
 
 	getline(is, line); // params
 	this->nbSommets = stoi(getSplited(line, ' ', 0));
-	//... = stoi(getSplited(line, ' ', 1)); // valeurs par sommet;
+	this->nbValeurParSommet = stoi(getSplited(line, ' ', 1)); // valeurs par sommet;
 	this->nbArcs = stoi(getSplited(line, ' ', 2));
 	this->nbValeursParArc = stoi(getSplited(line, ' ', 3));
 
@@ -45,7 +45,12 @@ Graphe::Graphe(std::string filePath) {
 		if (getSplited(line, ' ', 0).find("Edges") != std::string::npos)
 			break;
 
-		this->listeSommets.emplace_back(Vertex(getSplited(line, ' ', 1)));
+		std::vector<double> val = std::vector<double>(this->nbValeurParSommet);
+		for (int i = 0; i < this->nbValeurParSommet; i++) {
+			val[i] = std::stod(getSplited(line, ' ', 2+i));
+		}
+
+		this->listeSommets.emplace_back(Vertex(getSplited(line, ' ', 1), val));
 	}
 
 	// pour chaque edge :
@@ -102,7 +107,15 @@ void Graphe::Afficher(int nbMax)
 	std::cout << "Nb Valeur par Arc : " << this->nbValeursParArc << std::endl;
 	std::cout << "\nSommets :" << std::endl;
 	for (int iSommet = 0; iSommet < std::min(this->nbSommets, nbMax); iSommet++) {
-		std::cout << this->listeSommets[iSommet].toString() << " degre(" + std::to_string(this->degres.get()[iSommet]) + ")" << std::endl;
+		std::cout << this->listeSommets[iSommet].toString() << " (deg:" + std::to_string(this->degres.get()[iSommet]) + ")";
+		if (this->nbValeurParSommet > 0) {
+			std::cout << " (val:";
+			for (int i = 0; i < this->nbValeurParSommet; i++) {
+				std::cout << " " << this->listeSommets[iSommet].values[i];
+			}
+			std::cout << ")";
+		}
+		std::cout << std::endl;
 	}
 	std::cout << "\nArretes :" << std::endl;
 	for (int i = 0; i < std::min(this->nbSommets, nbMax); i++) {
@@ -172,7 +185,6 @@ std::vector<double> Graphe::DikstraAll(unsigned int v1)
 				}
 			}
 		}
-
 	}
 
 	return lambda;
@@ -238,7 +250,6 @@ double Graphe::Dikstra(unsigned int v1, unsigned int v2)
 				}
 			}
 		}
-
 	}
 
 	return -1;
