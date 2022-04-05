@@ -34,6 +34,18 @@ private:
 	Edge* getEdgeBetween(unsigned int v1, unsigned int v2);
 	double computeHeuristique(Vertex& v1, Vertex& v2);
 
+	void computeNCities(int iVille, int nbCityPerThread, const std::vector<int>& villesSelect, double& minAverage, int& index);
+	void addLenghtToSum(double& ret, int i_ville, const std::vector<int>& villesSelected, int iGrandeVille);
+
+	class vertLambda {
+	public:
+		double val;
+		int index;
+		vertLambda(double _val, int _index) :val(_val), index(_index) {}
+		vertLambda() :val(0), index(0) {}
+		struct vertLambdaCompare{bool operator()(const vertLambda& lhs, const vertLambda& rhs){return lhs.val < rhs.val;}};
+	};
+
 public:
 
 	Graphe(std::string filePath);
@@ -42,10 +54,13 @@ public:
 
 	void Afficher(int nbMax = INT16_MAX);
 
-	std::vector<double> DikstraAll(unsigned int from);
 	double Dikstra(unsigned int from, unsigned int to);
+	std::vector<double> DikstraAll(unsigned int from);
+	double DikstraHeap(unsigned int from, unsigned int to);
 
 	double AStar(unsigned int from, unsigned int to);
+
+	Vertex* VRP1(unsigned int nbMinHab, std::string strCsvFileName);
 
 };
 
