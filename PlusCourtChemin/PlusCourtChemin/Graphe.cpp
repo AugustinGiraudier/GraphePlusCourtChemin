@@ -4,6 +4,7 @@
 #include <queue>
 #include <exception>
 #include <thread>
+#include <list>
 
 Graphe::Graphe(std::string filePath) {
 
@@ -260,70 +261,83 @@ double Graphe::Dikstra(unsigned int v1, unsigned int v2)
 
 double Graphe::DikstraHeap(unsigned int v1, unsigned int v2)
 {
+	std::priority_queue< std::pair<double,int>, std::vector<std::pair<double, int>>, std::greater<std::pair<double, int>>> heap;
 
-	// vecteur de retour lambda :
-	std::vector<double> lambda = std::vector<double>(this->listeSommets.size());
+	std::vector<double> lambda(listeSommets.size(), DOUBLE_MAX);
 
-	std::priority_queue <vertLambda, std::vector<vertLambda>, vertLambda::vertLambdaCompare> queue {};
-
-	std::vector<unsigned int> Z = std::vector<unsigned int>();
-	Z.reserve(this->listeSommets.size() - 1);
-	for (unsigned int index = 0; index < this->listeSommets.size(); index++)
-		if (index != v1)
-			Z.emplace_back(index);
+	heap.push(std::make_pair(0.0f, v1));
 	lambda[v1] = 0;
-	queue.push(vertLambda{ 0,(int)v1 });
 
-	for (unsigned int vertID : Z) {
+	while (!heap.empty())
+	{
+		int vertID = heap.top().second;
+		if (vertID == v2)
+			return lambda[vertID];
 
-		// recherche d'arrete v1 --> v2
-		Edge* e = getEdgeBetween(v1, vertID);
+		heap.pop();
 
-		// si l'arrete existe :
-		if (e != nullptr)
-			lambda[vertID] = e->valeurs[0];
-		else
-			lambda[vertID] = DOUBLE_MAX;
-	}
+		for (Edge& e : this->listeAdjacense[vertID]) {
 
-	while (!Z.empty()) {
+			int v = e.sommetTerminal;
+			double dist =e.valeurs[0];
 
-		// recuperation du minimum dans lambda avec vert dans Z :
-		int x = 0;
-		{
-			int idInZ = -1;
-			int xInZ = 0;
-			double minVal = DOUBLE_MAX;
-			for (unsigned int vertID : Z) {
-				idInZ++;
-				if (lambda[vertID] <= minVal) {
-					minVal = lambda[vertID];
-					x = vertID;
-					xInZ = idInZ;
-				}
-			}
-			if (Z[xInZ] == v2)
-				return lambda[v2];
-			Z.erase(std::next(Z.begin(), xInZ)); // suppression de x dans Z
-		}
-
-		// pour tous les successeurs de x :
-		for (Edge& e : this->listeAdjacense[x]) {
-			int iId = e.sommetTerminal;
-
-			// s'il appartient a Z :
-			for (unsigned int vertID : Z) {
-				if (vertID == iId) {
-					// si lambda de x + l(x,i) < lambda de i :
-					if (lambda[x] + e.valeurs[0] < lambda[iId])
-						lambda[iId] = lambda[x] + e.valeurs[0];
-					break;
-				}
+			if (lambda[v] > lambda[vertID] + dist)
+			{
+				lambda[v] = lambda[vertID] + dist;
+				heap.push(std::make_pair(lambda[v], v));
 			}
 		}
 	}
+	
+	return lambda[v2];
+}
 
-	return -1;
+double Graphe::Dikstra2(unsigned int v1, unsigned int v2)
+{
+	std::vector<std::pair<double, int>> Z;
+
+	std::vector<double> lambda(listeSommets.size(), DOUBLE_MAX);
+
+	Z.push_back(std::make_pair(0.0f, v1));
+	lambda[v1] = 0;
+
+	while (!Z.empty())
+	{
+
+		int vertID = -1;
+		int vertInZ = -1;
+		double min = DOUBLE_MAX;
+
+		// trouver le min
+		int ZCpt = 0;
+		for (auto& pairVec : Z) {
+			if (pairVec.first < min) {
+				min = pairVec.first;
+				vertID = pairVec.second;
+				vertInZ = ZCpt;
+			}
+			ZCpt++;
+		}
+
+		if (vertID == v2)
+			return lambda[vertID];
+
+		Z.erase(std::next(Z.begin(), vertInZ));
+
+		for (Edge& e : this->listeAdjacense[vertID]) {
+
+			int v = e.sommetTerminal;
+			double dist = e.valeurs[0];
+
+			if (lambda[v] > lambda[vertID] + dist)
+			{
+				lambda[v] = lambda[vertID] + dist;
+				Z.push_back(std::make_pair(lambda[v], v));
+			}
+		}
+	}
+
+	return lambda[v2];
 }
 
 
@@ -434,7 +448,9 @@ Vertex* Graphe::VRP1(unsigned int nbMinHab, std::string strCsvFileName)
 		double minAvg = DOUBLE_MAX;
 	};
 
-#define NB_THREAD 12
+	const unsigned int NB_THREAD = std::thread::hardware_concurrency();
+
+	std::cout << "Lancement sur " << NB_THREAD << " threads..." << std::endl;
 
 	std::vector<threadReturn*> tabThread {};
 	tabThread.reserve(NB_THREAD);
@@ -446,7 +462,7 @@ Vertex* Graphe::VRP1(unsigned int nbMinHab, std::string strCsvFileName)
 	int iVille = 0;
 
 	// pour chaque thread :
-	for (int iThread = 0; iThread < NB_THREAD; iThread++) {
+	for (unsigned int iThread = 0; iThread < NB_THREAD; iThread++) {
 		threadReturn* tr = new threadReturn{};
 		tr->th = new std::thread(&Graphe::computeNCities, this, iVille, nbCityPerThread, villesSelect, std::ref(tr->minAvg), std::ref(tr->index));
 		//computeNCities(iVille, nbCityPerThread, villesSelect, tr->minAvg, tr->index);
@@ -458,7 +474,7 @@ Vertex* Graphe::VRP1(unsigned int nbMinHab, std::string strCsvFileName)
 	int index = -1;
 	computeNCities(iVille, nbCityForLastThread, villesSelect, minAverage, index);
 
-	// r�cup�ration des threads, traitement et clean memoire :
+	// recuperation des threads, traitement et clean memoire :
 	for (threadReturn* tr : tabThread) {
 		tr->th->join();
 		std::cout << "thread joined..." << std::endl;
@@ -484,7 +500,7 @@ void Graphe::computeNCities(int iVille, int nbCityPerThread, const std::vector<i
 		double currentSum = 0;
 
 		for (int i_grandeVille = 0; i_grandeVille < villesSelect.size();i_grandeVille++) {
-			currentSum += this->AStar(iVille, villesSelect[i_grandeVille]);
+			currentSum += this->DikstraHeap(iVille, villesSelect[i_grandeVille]);
 		}
 
 		double avg = currentSum / villesSelect.size();
