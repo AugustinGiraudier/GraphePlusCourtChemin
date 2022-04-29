@@ -76,6 +76,36 @@ Graphe::Graphe(std::string filePath) {
 	}
 }
 
+std::vector<int> Graphe::getCitiesWithMorePeopleThan(unsigned int nbMinHab, std::string& filename)
+{
+	std::ifstream is(filename);
+
+	if (!is.is_open()) {
+		std::cerr << "impossible d'ouvrir le fichier...";
+		exit(1);
+	}
+
+	const char SEPARATOR = ';';
+	std::string line;
+
+	getline(is, line); // nom des colonnes
+
+	std::vector<int> villesSelect{};
+
+	// selection des villes de + de n habitants
+	while (getline(is, line)) {
+		std::string ville = getSplited(line, SEPARATOR, 0);
+		unsigned int nbHabitants = stoi(getSplited(line, SEPARATOR, 2));
+		if (nbHabitants >= nbMinHab)
+			for (int i_vert = 0; i_vert < this->listeSommets.size();i_vert++)
+				if (this->listeSommets[i_vert].nom == ville) {
+					villesSelect.push_back(i_vert);
+					break;
+				}
+	}
+	return villesSelect;
+}
+
 std::string Graphe::getSplited(std::string& str, const char separator, int index) {
 	int nbSepa = 0;
 	int id = 0;
@@ -133,60 +163,40 @@ void Graphe::Afficher(int nbMax)
 
 std::vector<double> Graphe::DikstraAll(unsigned int v1)
 {
+	std::vector<std::pair<double, int>> Z;
+	std::vector<double> lambda(listeSommets.size(), DOUBLE_MAX);
 
-	// vecteur de retour lambda :
-	std::vector<double> lambda = std::vector<double>(this->listeSommets.size());
-
-	std::vector<unsigned int> Z = std::vector<unsigned int>();
-	Z.reserve(this->listeSommets.size() - 1);
-	for (unsigned int index = 0; index < this->listeSommets.size(); index++)
-		if (index != v1) 
-			Z.emplace_back(index);
+	Z.push_back(std::make_pair(0.0f, v1));
 	lambda[v1] = 0;
 
-	for (unsigned int vertID : Z) {
+	while (!Z.empty())
+	{
+		int vertID = -1;
+		int vertInZ = -1;
+		double min = DOUBLE_MAX;
 
-		// recherche d'arrete v1 --> v2
-		Edge* e = getEdgeBetween(v1, vertID);
-		
-		// si l'arrete existe :
-		if (e != nullptr)
-			lambda[vertID] = e->valeurs[0];
-		else
-			lambda[vertID] = DOUBLE_MAX;
-	}
-
-	while (!Z.empty()) {
-	
-		// recuperation du minimum dans lambda avec vert dans Z :
-		int x = 0;
-		{
-			int idInZ = -1;
-			int xInZ = 0;
-			double minVal = DOUBLE_MAX;
-			for (unsigned int vertID : Z) {
-				idInZ++;
-				if (lambda[vertID] <= minVal) {
-					minVal = lambda[vertID];
-					x = vertID;
-					xInZ = idInZ;
-				}
+		// trouver le min
+		int ZCpt = 0;
+		for (auto& pairVec : Z) {
+			if (pairVec.first < min) {
+				min = pairVec.first;
+				vertID = pairVec.second;
+				vertInZ = ZCpt;
 			}
-			Z.erase(std::next(Z.begin(), xInZ)); // suppression de x dans Z
+			ZCpt++;
 		}
 
-		// pour tous les successeurs de x :
-		for (Edge& e : this->listeAdjacense[x]) {
-			int iId = e.sommetTerminal;
+		Z.erase(std::next(Z.begin(), vertInZ));
 
-			// s'il appartient a Z :
-			for (unsigned int vertID : Z) {
-				if (vertID == iId) {
-					// si lambda de x + l(x,i) < lambda de i :
-					if (lambda[x] + e.valeurs[0] < lambda[iId])
-						lambda[iId] = lambda[x] + e.valeurs[0];
-					break;
-				}
+		for (Edge& e : this->listeAdjacense[vertID]) {
+
+			int v = e.sommetTerminal;
+			double dist = e.valeurs[0];
+
+			if (lambda[v] > lambda[vertID] + dist)
+			{
+				lambda[v] = lambda[vertID] + dist;
+				Z.push_back(std::make_pair(lambda[v], v));
 			}
 		}
 	}
@@ -295,7 +305,6 @@ double Graphe::DikstraHeap(unsigned int v1, unsigned int v2)
 double Graphe::Dikstra2(unsigned int v1, unsigned int v2)
 {
 	std::vector<std::pair<double, int>> Z;
-
 	std::vector<double> lambda(listeSommets.size(), DOUBLE_MAX);
 
 	Z.push_back(std::make_pair(0.0f, v1));
@@ -303,7 +312,6 @@ double Graphe::Dikstra2(unsigned int v1, unsigned int v2)
 
 	while (!Z.empty())
 	{
-
 		int vertID = -1;
 		int vertInZ = -1;
 		double min = DOUBLE_MAX;
@@ -339,7 +347,6 @@ double Graphe::Dikstra2(unsigned int v1, unsigned int v2)
 
 	return lambda[v2];
 }
-
 
 double Graphe::AStar(unsigned int v1, unsigned int v2){
 
@@ -414,32 +421,7 @@ double Graphe::AStar(unsigned int v1, unsigned int v2){
 
 Vertex* Graphe::VRP1(unsigned int nbMinHab, std::string strCsvFileName)
 {
-	std::ifstream is(strCsvFileName);
-
-	if (!is.is_open()) {
-		std::cerr << "impossible d'ouvrir le fichier...";
-		exit(1);
-	}
-
-	const char SEPARATOR = ';';
-	std::string line;
-
-	getline(is, line); // nom des colonnes
-
-	std::vector<int> villesSelect{};
-
-	// selection des villes de + de n habitants
-	while (getline(is, line)) {
-		std::string ville = getSplited(line, SEPARATOR, 0);
-		unsigned int nbHabitants = stoi(getSplited(line, SEPARATOR, 2));
-		if (nbHabitants >= nbMinHab)
-			for (int i_vert = 0; i_vert < this->listeSommets.size();i_vert++)
-				if (this->listeSommets[i_vert].nom == ville){
-					villesSelect.push_back(i_vert);
-					break;
-				}
-	}
-
+	std::vector<int> villesSelect = getCitiesWithMorePeopleThan(nbMinHab, strCsvFileName);
 	std::cout << "nombre de villes trouvees : " << villesSelect.size() << std::endl;
 
 	struct threadReturn {
@@ -492,6 +474,43 @@ Vertex* Graphe::VRP1(unsigned int nbMinHab, std::string strCsvFileName)
 	}
 
 	return &listeSommets[index];
+}
+
+std::vector<int> Graphe::VRP2(unsigned int nbMinHab, std::string strCsvFileName)
+{
+	// récupération des villes concernées :
+	std::list<int> ListvillesSelect;
+
+	{
+		std::vector<int> villesSelect = getCitiesWithMorePeopleThan(nbMinHab, strCsvFileName);
+		std::cout << "nombre de villes trouvees : " << villesSelect.size() << std::endl;
+		ListvillesSelect = std::list<int>(villesSelect.begin(), villesSelect.end());
+	}
+
+	std::vector<int> chemin {};
+	chemin.reserve(ListvillesSelect.size());
+
+	chemin.emplace_back(ListvillesSelect.front());
+	ListvillesSelect.remove(ListvillesSelect.front());
+
+	while (!ListvillesSelect.empty())
+	{
+		double min = DOUBLE_MAX;
+		int index = -1;
+
+		for (int val : ListvillesSelect) {
+			double res = DikstraHeap(chemin[chemin.size() - 1], val);
+			if (res < min) {
+				min = res;
+				index = val;
+			}
+		}
+
+		chemin.emplace_back(index);
+		ListvillesSelect.remove(index);
+	}
+
+	return chemin;
 }
 
 void Graphe::computeNCities(int iVille, int nbCityPerThread, const std::vector<int>& villesSelect, double& minAverage, int& index) {
