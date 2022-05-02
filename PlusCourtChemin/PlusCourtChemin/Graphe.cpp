@@ -446,7 +446,7 @@ Vertex* Graphe::VRP1(unsigned int nbMinHab, std::string strCsvFileName)
 	// pour chaque thread :
 	for (unsigned int iThread = 0; iThread < NB_THREAD; iThread++) {
 		threadReturn* tr = new threadReturn{};
-		tr->th = new std::thread(&Graphe::computeNCities, this, iVille, nbCityPerThread, villesSelect, std::ref(tr->minAvg), std::ref(tr->index));
+		tr->th = new std::thread(&Graphe::VRP1computeNCities, this, iVille, nbCityPerThread, villesSelect, std::ref(tr->minAvg), std::ref(tr->index));
 		//computeNCities(iVille, nbCityPerThread, villesSelect, tr->minAvg, tr->index);
 		tabThread.emplace_back(tr);
 		iVille += nbCityPerThread;
@@ -454,7 +454,7 @@ Vertex* Graphe::VRP1(unsigned int nbMinHab, std::string strCsvFileName)
 	// dernier thread :
 	double minAverage = DOUBLE_MAX;
 	int index = -1;
-	computeNCities(iVille, nbCityForLastThread, villesSelect, minAverage, index);
+	VRP1computeNCities(iVille, nbCityForLastThread, villesSelect, minAverage, index);
 
 	// recuperation des threads, traitement et clean memoire :
 	for (threadReturn* tr : tabThread) {
@@ -474,6 +474,31 @@ Vertex* Graphe::VRP1(unsigned int nbMinHab, std::string strCsvFileName)
 	}
 
 	return &listeSommets[index];
+}
+
+Vertex* Graphe::VRP1v2(unsigned int nbMinHab, std::string strCsvFileName)
+{
+	std::vector<int> villesSelect = getCitiesWithMorePeopleThan(nbMinHab, strCsvFileName);
+	std::cout << "nombre de villes trouvees : " << villesSelect.size() << std::endl;
+
+	std::vector<double> vecRes(this->listeSommets.size());
+
+	for (int iVille = 0; iVille < villesSelect.size(); iVille++) {
+		std::vector<double> res = this->DikstraAll(villesSelect[iVille]);
+		for (int i = 0; i < res.size(); i++)
+			vecRes[i] += res[i];
+	}
+
+	int iMin = -1;
+	double min = DOUBLE_MAX;
+
+	for (int i = 0; i < vecRes.size(); i++)
+		if (vecRes[i] < min) {
+			min = vecRes[i];
+			iMin = i;
+		}
+
+	return &this->listeSommets[iMin];
 }
 
 std::vector<int> Graphe::VRP2(unsigned int nbMinHab, std::string strCsvFileName)
@@ -513,7 +538,7 @@ std::vector<int> Graphe::VRP2(unsigned int nbMinHab, std::string strCsvFileName)
 	return chemin;
 }
 
-void Graphe::computeNCities(int iVille, int nbCityPerThread, const std::vector<int>& villesSelect, double& minAverage, int& index) {
+void Graphe::VRP1computeNCities(int iVille, int nbCityPerThread, const std::vector<int>& villesSelect, double& minAverage, int& index) {
 	int end = iVille + nbCityPerThread;
 	for (; iVille < end; iVille++) {
 		double currentSum = 0;

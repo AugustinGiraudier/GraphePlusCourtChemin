@@ -34,7 +34,7 @@ private:
 	Edge* getEdgeBetween(unsigned int v1, unsigned int v2);
 	double computeHeuristique(Vertex& v1, Vertex& v2);
 
-	void computeNCities(int iVille, int nbCityPerThread, const std::vector<int>& villesSelect, double& minAverage, int& index);
+	void VRP1computeNCities(int iVille, int nbCityPerThread, const std::vector<int>& villesSelect, double& minAverage, int& index);
 	std::vector<int> getCitiesWithMorePeopleThan(unsigned int nbMinHab, std::string& filename);
 
 public:
@@ -54,6 +54,7 @@ public:
 
 	// Question VRP 1
 	Vertex* VRP1(unsigned int nbMinHab, std::string strCsvFileName);
+	Vertex* VRP1v2(unsigned int nbMinHab, std::string strCsvFileName);
 
 	// Question VRP 2
 	std::vector<int> VRP2(unsigned int nbMinHab, std::string strCsvFileName);
