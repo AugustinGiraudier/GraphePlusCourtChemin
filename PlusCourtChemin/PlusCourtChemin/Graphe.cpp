@@ -535,7 +535,43 @@ std::vector<int> Graphe::VRP2(unsigned int nbMinHab, std::string strCsvFileName)
 		ListvillesSelect.remove(index);
 	}
 
+	std::cout << "longueur totale v1 : " << GetCircuitLength(std::list<int>(chemin.begin(), chemin.end())) << std::endl;
+
 	return chemin;
+}
+
+std::vector<int> Graphe::VRP2v2(unsigned int nbMinHab, std::string strCsvFileName)
+{
+	// récupération des villes concernées :
+	std::vector<int> villesSelect = getCitiesWithMorePeopleThan(nbMinHab, strCsvFileName);
+	std::cout << "nombre de villes trouvees : " << villesSelect.size() << std::endl;
+
+	std::list<int> chemin{};
+
+	chemin.emplace_back(villesSelect[0]);
+
+	for (int iVille = 1; iVille < villesSelect.size(); iVille++) {
+		int GoodSpace = -1;
+		double length = DOUBLE_MAX;
+		for (int iSpace = 0; iSpace < chemin.size(); iSpace++) {
+			std::list<int> testchemin = chemin;
+			auto it = testchemin.begin();
+			std::advance(it, iSpace+1);
+			testchemin.insert(it, villesSelect[iVille]);
+			double circuitLength = GetCircuitLength(testchemin);
+			if (circuitLength < length) {
+				length = circuitLength;
+				GoodSpace = iSpace+1;
+			}
+		}
+		auto it = chemin.begin();
+		std::advance(it, GoodSpace);
+		chemin.insert(it, villesSelect[iVille]);
+	}
+	
+	std::cout << "longueur totale v2 : " << GetCircuitLength(chemin) << std::endl;
+
+	return std::vector<int>(chemin.begin(), chemin.end());
 }
 
 void Graphe::VRP1computeNCities(int iVille, int nbCityPerThread, const std::vector<int>& villesSelect, double& minAverage, int& index) {
@@ -565,4 +601,38 @@ double Graphe::computeHeuristique(Vertex& v1, Vertex& v2){
 	double Sab = acos(sinus + cosinus);
 	return (Sab * 6371);
 
+}
+
+double Graphe::GetCircuitLength(const std::list<int>& circuit)
+{
+	double res = 0;
+
+	auto it = circuit.begin();
+	auto it2 = circuit.begin();
+	std::advance(it2, 1);
+	while (it2 != circuit.end()) {
+		int iVille = *it;
+		int iVille2 = *it2;
+		res += DikstraHeap(iVille, iVille2);
+		std::advance(it, 1);
+		std::advance(it2, 1);
+	}
+
+	res += DikstraHeap(circuit.back(), circuit.front());
+
+	return res;
+}
+
+std::string Graphe::getMyMappsScript(const std::vector<int>& circuit)
+{
+	std::string out = "";
+	out += "WKT,nom\n";
+	for (int ires = 0; ires < circuit.size();ires++) {
+		int iville = circuit[ires];
+		int iville2 = circuit[((ires + 1) == circuit.size() ? 0 : ires + 1)];
+		out += "\"POINT(" + std::to_string(listeSommets[iville].values[0]) + ' ' + std::to_string(listeSommets[iville].values[1]) + ")\"," + listeSommets[iville].nom + ",\n";
+		out += "\"LINESTRING(" + std::to_string(listeSommets[iville].values[0]) + ' ' + std::to_string(listeSommets[iville].values[1]) + ','
+			+ std::to_string(listeSommets[iville2].values[0]) + ' ' + std::to_string(listeSommets[iville2].values[1]) + ")\",line" + std::to_string(iville) + std::to_string(iville2) + ",\n";
+	}
+	return out;
 }

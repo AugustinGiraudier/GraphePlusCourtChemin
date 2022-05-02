@@ -16,8 +16,8 @@ int main() {
 
 	//Graphe G = Graphe(GRAPHES_ROOT + "CommunesFrance_5000.tgoGraph");
 	//Graphe G = Graphe(GRAPHES_ROOT + "Graphe_01.tgoGraph");
-	//Graphe G = Graphe(GRAPHES_ROOT + "CommunesFrance_5000coord.tgoGraph");
-	Graphe G = Graphe(GRAPHES_ROOT + "CommunesFrance_10000coord.tgoGraph");
+	Graphe G = Graphe(GRAPHES_ROOT + "CommunesFrance_5000coord.tgoGraph");
+	//Graphe G = Graphe(GRAPHES_ROOT + "CommunesFrance_10000coord.tgoGraph");
 
 	/*-------- VRP 1 --------*/
 
@@ -43,16 +43,27 @@ int main() {
 	
 	/*-------- VRP 2 --------*/
 
-	//{
-	//	auto t0 = std::chrono::high_resolution_clock::now();
-	//	std::vector<int> vec = G.VRP2(NB_HABITANTS_GRANDE_VILLE_VRP_2, GRAPHES_ROOT + "CommunesFrance.csv");
-	//	auto t1 = std::chrono::high_resolution_clock::now();
-	//	std::chrono::duration<float> fs = t1 - t0;
-	//	std::cout << "temps d'execution VRP2 : " << std::chrono::duration_cast<std::chrono::seconds>(fs).count() << " s" << std::endl;
-	//	std::cout << "villes trouvees : " << std::endl;
-	//	for (int iVille : vec)
-	//		std::cout << (*G.getVertices())[iVille].nom << std::endl;
-	//}
+	{
+		auto t0 = std::chrono::high_resolution_clock::now();
+		std::vector<int> vec = G.VRP2(NB_HABITANTS_GRANDE_VILLE_VRP_2, GRAPHES_ROOT + "communesfrance.csv");
+		auto t1 = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<float> fs = t1 - t0;
+		std::cout << "temps d'execution vrp2 : " << std::chrono::duration_cast<std::chrono::seconds>(fs).count() << " s" << std::endl;
+		std::cout << "villes trouvees : " << std::endl << std::endl;
+		std::cout << G.getMyMappsScript(vec) << "\n\n";
+	}	
+
+	/*-------- VRP 2 v2 --------*/
+
+	{
+		auto t0 = std::chrono::high_resolution_clock::now();
+		std::vector<int> vec = G.VRP2v2(NB_HABITANTS_GRANDE_VILLE_VRP_2, GRAPHES_ROOT + "CommunesFrance.csv");
+		auto t1 = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<float> fs = t1 - t0;
+		std::cout << std::endl << "temps d'execution VRP2 v2 : " << std::chrono::duration_cast<std::chrono::seconds>(fs).count() << " s" << std::endl;
+		std::cout << "villes trouvees : " << std::endl << std::endl;
+		std::cout << G.getMyMappsScript(vec);
+	}
 
 	/*-------- Dikstra All --------*/
 

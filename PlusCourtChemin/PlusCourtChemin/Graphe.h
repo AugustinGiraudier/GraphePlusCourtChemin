@@ -37,11 +37,14 @@ private:
 	void VRP1computeNCities(int iVille, int nbCityPerThread, const std::vector<int>& villesSelect, double& minAverage, int& index);
 	std::vector<int> getCitiesWithMorePeopleThan(unsigned int nbMinHab, std::string& filename);
 
+	double GetCircuitLength(const std::list<int>& circuit);
+
 public:
 
 	Graphe(std::string filePath);
 	std::vector<Vertex>* getVertices() { return &this->listeSommets; }
 	void Afficher(int nbMax = INT16_MAX);
+	std::string getMyMappsScript(const std::vector<int>& circuit);
 
 	// Dikstra
 	double Dikstra(unsigned int from, unsigned int to);
@@ -58,7 +61,7 @@ public:
 
 	// Question VRP 2
 	std::vector<int> VRP2(unsigned int nbMinHab, std::string strCsvFileName);
-
+	std::vector<int> VRP2v2(unsigned int nbMinHab, std::string strCsvFileName);
 };
 
 #endif
