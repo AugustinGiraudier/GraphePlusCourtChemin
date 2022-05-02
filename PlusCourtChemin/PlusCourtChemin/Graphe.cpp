@@ -546,33 +546,75 @@ std::vector<int> Graphe::VRP2v2(unsigned int nbMinHab, std::string strCsvFileNam
 	std::vector<int> villesSelect = getCitiesWithMorePeopleThan(nbMinHab, strCsvFileName);
 	std::cout << "nombre de villes trouvees : " << villesSelect.size() << std::endl;
 
-	std::list<int> chemin{};
-
-	chemin.emplace_back(villesSelect[0]);
+	std::list<int> chemin;
+	chemin.push_back(villesSelect[0]);
 
 	for (int iVille = 1; iVille < villesSelect.size(); iVille++) {
-		int GoodSpace = -1;
+		double cheminLen = GetCircuitLength(chemin);
+		std::list<int>::iterator BestSpace = chemin.begin();
 		double length = DOUBLE_MAX;
-		for (int iSpace = 0; iSpace < chemin.size(); iSpace++) {
-			std::list<int> testchemin = chemin;
-			auto it = testchemin.begin();
-			std::advance(it, iSpace+1);
-			testchemin.insert(it, villesSelect[iVille]);
-			double circuitLength = GetCircuitLength(testchemin);
-			if (circuitLength < length) {
-				length = circuitLength;
-				GoodSpace = iSpace+1;
+		std::list<int>::iterator it = chemin.begin();
+		std::list<int>::iterator it2 = chemin.begin();
+		std::advance(it2, 1);
+		while(it != chemin.end()) {
+
+			int villeA = *it;
+			int villeB = (it2 == chemin.end()) ? 0 : *(it2);
+
+			double a = DikstraHeap(villeA, villesSelect[iVille]);
+			double b = DikstraHeap(villesSelect[iVille], villeB);
+			double c = DikstraHeap(villeA, villeB);
+			double circuitlen = cheminLen + a + b - c;
+			
+			std::advance(it, 1);
+			std::advance(it2, 1);
+
+			if (circuitlen < length) {
+				length = circuitlen;
+				BestSpace = it;
 			}
 		}
-		auto it = chemin.begin();
-		std::advance(it, GoodSpace);
-		chemin.insert(it, villesSelect[iVille]);
+		chemin.insert(BestSpace, villesSelect[iVille]);
 	}
 	
 	std::cout << "longueur totale v2 : " << GetCircuitLength(chemin) << std::endl;
 
 	return std::vector<int>(chemin.begin(), chemin.end());
 }
+
+//std::vector<int> Graphe::VRP2v2(unsigned int nbMinHab, std::string strCsvFileName)
+//{
+//	// récupération des villes concernées :
+//	std::vector<int> villesSelect = getCitiesWithMorePeopleThan(nbMinHab, strCsvFileName);
+//	std::cout << "nombre de villes trouvees : " << villesSelect.size() << std::endl;
+//
+//	std::list<int> chemin{};
+//
+//	chemin.emplace_back(villesSelect[0]);
+//
+//	for (int iVille = 1; iVille < villesSelect.size(); iVille++) {
+//		int GoodSpace = -1;
+//		double length = DOUBLE_MAX;
+//		for (int iSpace = 0; iSpace < chemin.size(); iSpace++) {
+//			std::list<int> testchemin = chemin;
+//			auto it = testchemin.begin();
+//			std::advance(it, iSpace + 1);
+//			testchemin.insert(it, villesSelect[iVille]);
+//			double circuitLength = GetCircuitLength(testchemin);
+//			if (circuitLength < length) {
+//				length = circuitLength;
+//				GoodSpace = iSpace + 1;
+//			}
+//		}
+//		auto it = chemin.begin();
+//		std::advance(it, GoodSpace);
+//		chemin.insert(it, villesSelect[iVille]);
+//	}
+//
+//	std::cout << "longueur totale v2 : " << GetCircuitLength(chemin) << std::endl;
+//
+//	return std::vector<int>(chemin.begin(), chemin.end());
+//}
 
 void Graphe::VRP1computeNCities(int iVille, int nbCityPerThread, const std::vector<int>& villesSelect, double& minAverage, int& index) {
 	int end = iVille + nbCityPerThread;
@@ -604,6 +646,25 @@ double Graphe::computeHeuristique(Vertex& v1, Vertex& v2){
 }
 
 double Graphe::GetCircuitLength(const std::list<int>& circuit)
+{
+	double res = 0;
+
+	auto it = circuit.begin();
+	auto it2 = circuit.begin();
+	std::advance(it2, 1);
+	while (it2 != circuit.end()) {
+		int iVille = *it;
+		int iVille2 = *it2;
+		res += DikstraHeap(iVille, iVille2);
+		std::advance(it, 1);
+		std::advance(it2, 1);
+	}
+
+	res += DikstraHeap(circuit.back(), circuit.front());
+
+	return res;
+}
+double Graphe::GetCircuitLength(const std::vector<int>& circuit)
 {
 	double res = 0;
 

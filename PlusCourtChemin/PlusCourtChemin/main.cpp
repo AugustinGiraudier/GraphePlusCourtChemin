@@ -16,8 +16,8 @@ int main() {
 
 	//Graphe G = Graphe(GRAPHES_ROOT + "CommunesFrance_5000.tgoGraph");
 	//Graphe G = Graphe(GRAPHES_ROOT + "Graphe_01.tgoGraph");
-	Graphe G = Graphe(GRAPHES_ROOT + "CommunesFrance_5000coord.tgoGraph");
-	//Graphe G = Graphe(GRAPHES_ROOT + "CommunesFrance_10000coord.tgoGraph");
+	//Graphe G = Graphe(GRAPHES_ROOT + "CommunesFrance_5000coord.tgoGraph");
+	Graphe G = Graphe(GRAPHES_ROOT + "CommunesFrance_10000coord.tgoGraph");
 
 	/*-------- VRP 1 --------*/
 
@@ -137,5 +137,6 @@ int main() {
 	//	std::cout << "temps d'execution : " << std::chrono::duration_cast<std::chrono::milliseconds>(fs).count() << " ms" << std::endl;
 	//}
 	
+	//getchar();
 	return 0;
 }

@@ -38,6 +38,7 @@ private:
 	std::vector<int> getCitiesWithMorePeopleThan(unsigned int nbMinHab, std::string& filename);
 
 	double GetCircuitLength(const std::list<int>& circuit);
+	double GetCircuitLength(const std::vector<int>& circuit);
 
 public:
 
