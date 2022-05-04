@@ -55,9 +55,8 @@ Graphe::Graphe(std::string filePath) {
 	while (getline(is, line)) {
 
 		std::vector<double> val = std::vector<double>();
-		val.reserve(this->nbValeursParArc);
 		for (int i = 0; i < this->nbValeursParArc; i++)
-			val.emplace_back(std::stod((getSplited(line, ' ', 2 + i))));
+			val.push_back(std::stod((getSplited(line, ' ', 2 + i))));
 
 		this->listeAdjacense[std::stoi(getSplited(line, ' ', 0))].push_back(Edge(std::stoi(getSplited(line, ' ', 1)), val));
 		this->degres.get()[std::stoi(getSplited(line, ' ', 0))]++;

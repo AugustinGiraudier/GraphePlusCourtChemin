@@ -7,16 +7,15 @@
 
 // commentez les tests que vous ne voulez pas lancer :
 
-#define TST_VRP_1_1
-#define TST_VRP_1_2
+//#define TST_VRP_1_1
+//#define TST_VRP_1_2
 
-#define TST_VRP_2_1
-#define TST_VRP_2_2
+//#define TST_VRP_2_1
+//#define TST_VRP_2_2
 
 #define TST_DIJKSTRA
-#define TST_DIJKSTRA2
+//#define TST_DIJKSTRA_ALL
 #define TST_DIJKSTRA_HEAP
-#define TST_DIJKSTRA_ALL
 
 #define TST_A_STAR
 
@@ -24,7 +23,7 @@
 int main() {
 
 	const std::string GRAPHES_ROOT = "../../InputGraphes/";
-	const std::string VILLE_DEPART = "lille";
+	const std::string VILLE_DEPART = "nantes";
 	const std::string VILLE_ARRIVEE = "marseille";
 	const unsigned int MAX_AFFICHAGE = 25;
 	const unsigned int NB_HABITANTS_GRANDE_VILLE_VRP_1 = 200000;
@@ -32,11 +31,12 @@ int main() {
 
 	//Graphe G = Graphe(GRAPHES_ROOT + "CommunesFrance_5000.tgoGraph");
 	//Graphe G = Graphe(GRAPHES_ROOT + "Graphe_01.tgoGraph");
-	Graphe G = Graphe(GRAPHES_ROOT + "CommunesFrance_5000coord.tgoGraph");
-	//Graphe G = Graphe(GRAPHES_ROOT + "CommunesFrance_10000coord.tgoGraph");
+	//Graphe G = Graphe(GRAPHES_ROOT + "CommunesFrance_5000coord.tgoGraph");
+	Graphe G = Graphe(GRAPHES_ROOT + "CommunesFrance_10000coord.tgoGraph");
 
 	const unsigned int SOMMET_DEPART = G.getIndexWithName(VILLE_DEPART);
 	const unsigned int SOMMET_ARRIVEE = G.getIndexWithName(VILLE_ARRIVEE);
+
 
 	/*-------- VRP 1 --------*/
 #ifdef TST_VRP_1_1
@@ -96,6 +96,20 @@ int main() {
 		//std::cout << G.getMyMappsScript(vec);
 	}
 #endif
+	/*-------- Dikstra --------*/
+#ifdef TST_DIJKSTRA
+	{
+		std::cout << "=================================================" << std::endl;
+		std::cout << "[+] Lancement Dikstra" << std::endl;
+		std::cout << "[i] Lancement sur " << VILLE_DEPART << " - " << VILLE_ARRIVEE << std::endl;
+		auto t0 = std::chrono::high_resolution_clock::now();
+		double dist = G.Dijkstra(SOMMET_DEPART, SOMMET_ARRIVEE);
+		auto t1 = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<float> fs = t1 - t0;
+		std::cout << "[i] distance trouvee : " << dist << " km" << std::endl;
+		std::cout << "[i] temps d'execution : " << std::chrono::duration_cast<std::chrono::milliseconds>(fs).count() << " ms" << std::endl;
+	}
+#endif
 	/*-------- Dikstra All --------*/
 #ifdef TST_DIJKSTRA_ALL
 	{
@@ -112,34 +126,6 @@ int main() {
 		//for (unsigned int i = 0; i < std::min((unsigned int)vecRes.size(), MAX_AFFICHAGE); i++) {
 		//	std::cout << VILLE_DEPART << " -> " << i << " : " << vecRes[i] << std::endl;
 		//}
-		std::cout << "[i] temps d'execution : " << std::chrono::duration_cast<std::chrono::milliseconds>(fs).count() << " ms" << std::endl;
-	}
-#endif
-	/*-------- Dikstra --------*/
-#ifdef TST_DIJKSTRA
-	{
-		std::cout << "=================================================" << std::endl;
-		std::cout << "[+] Lancement Dikstra" << std::endl;
-		std::cout << "[i] Lancement sur " << VILLE_DEPART << " - " << VILLE_ARRIVEE << std::endl;
-		auto t0 = std::chrono::high_resolution_clock::now();
-		double dist = G.Dijkstra(SOMMET_DEPART, SOMMET_ARRIVEE);
-		auto t1 = std::chrono::high_resolution_clock::now();
-		std::chrono::duration<float> fs = t1 - t0;
-		std::cout << "[i] distance trouvee : " << dist << " km" << std::endl;
-		std::cout << "[i] temps d'execution : " << std::chrono::duration_cast<std::chrono::milliseconds>(fs).count() << " ms" << std::endl;
-	}
-#endif
-	/*-------- Dikstra 2 --------*/
-#ifdef TST_DIJKSTRA2
-	{
-		std::cout << "=================================================" << std::endl;
-		std::cout << "[+] Lancement Dikstra V2" << std::endl;
-		std::cout << "[i] Lancement sur " << VILLE_DEPART << " - " << VILLE_ARRIVEE << std::endl;
-		auto t0 = std::chrono::high_resolution_clock::now();
-		double dist = G.Dijkstra2(SOMMET_DEPART, SOMMET_ARRIVEE);
-		auto t1 = std::chrono::high_resolution_clock::now();
-		std::chrono::duration<float> fs = t1 - t0;
-		std::cout << "[i] distance trouvee : " << dist << " km" << std::endl;
 		std::cout << "[i] temps d'execution : " << std::chrono::duration_cast<std::chrono::milliseconds>(fs).count() << " ms" << std::endl;
 	}
 #endif

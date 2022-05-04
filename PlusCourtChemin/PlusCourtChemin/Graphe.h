@@ -112,7 +112,7 @@ private:
 public:
 
 	// ----- METHODES PUBLIQUES ----- //
-
+	int getNbSommet() { return listeSommets.size(); }
 	/*
 		Crée le graphe à l'aide du fichier de configuration du graphe
 
@@ -157,7 +157,7 @@ public:
 
 	/*
 		O(n²)
-		Algo dijkstra vu en cours de graphe
+		Algo dijkstra classique
 
 		@param from : index de la ville de départ
 		@param to : index de la ville d'arrivée
@@ -165,16 +165,7 @@ public:
 		@return la distance minimale entre les deux villes
 	*/
 	double Dijkstra(unsigned int from, unsigned int to);
-	/*
-		O(n²)
-		Algo dijkstra vu en cours de maths
 
-		@param from : index de la ville de départ
-		@param to : index de la ville d'arrivée
-
-		@return la distance minimale entre les deux villes
-	*/
-	double Dijkstra2(unsigned int from, unsigned int to);
 	/*
 		O(n²)
 		Algo Dijkstra vers toutes les villes du graphe
