@@ -153,53 +153,53 @@ public:
 	*/
 	std::string getMyMappsScript(const std::vector<int>& circuit);
 
-	// ----- Dikstra
+	// ----- Dijkstra
 
 	/*
 		O(n²)
-		Algo dikstra vu en cours de graphe
+		Algo dijkstra vu en cours de graphe
 
 		@param from : index de la ville de départ
 		@param to : index de la ville d'arrivée
 
 		@return la distance minimale entre les deux villes
 	*/
-	double Dikstra(unsigned int from, unsigned int to);
+	double Dijkstra(unsigned int from, unsigned int to);
 	/*
 		O(n²)
-		Algo dikstra vu en cours de maths
+		Algo dijkstra vu en cours de maths
 
 		@param from : index de la ville de départ
 		@param to : index de la ville d'arrivée
 
 		@return la distance minimale entre les deux villes
 	*/
-	double Dikstra2(unsigned int from, unsigned int to);
+	double Dijkstra2(unsigned int from, unsigned int to);
 	/*
 		O(n²)
-		Algo Dikstra vers toutes les villes du graphe
+		Algo Dijkstra vers toutes les villes du graphe
 
 		@param from : index de la ville de départ
 
 		@return la distance minimale entre la ville de départ et chaque ville du graphe
 	*/
-	std::vector<double> DikstraAll(unsigned int from);
+	std::vector<double> DijkstraAll(unsigned int from);
 	/*
 		O(m+n*log(n))
-		Algo dikstra avec une priority queue
+		Algo dijkstra avec une priority queue
 
 		@param v1 : index de la ville de départ
 		@param v2 : index de la ville d'arrivée
 
 		@return la distance minimale entre les deux villes
 	*/
-	double DikstraHeap(unsigned int v1, unsigned int v2);
+	double DijkstraHeap(unsigned int v1, unsigned int v2);
 
 	// ----- A*
 
 	/*
 		O(n²)
-		Algo A* basé sur dikstra2 avec une heuristique en fonction des coordonnées (lat, long)
+		Algo A* basé sur dijkstra2 avec une heuristique en fonction des coordonnées (lat, long)
 
 		@param from : index de la ville de départ
 		@param to : index de la ville d'arrivée

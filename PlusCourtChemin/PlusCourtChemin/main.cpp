@@ -13,10 +13,10 @@
 #define TST_VRP_2_1
 #define TST_VRP_2_2
 
-#define TST_DIKSTRA
-#define TST_DIKSTRA2
-#define TST_DIKSTRA_HEAP
-#define TST_DIKSTRA_ALL
+#define TST_DIJKSTRA
+#define TST_DIJKSTRA2
+#define TST_DIJKSTRA_HEAP
+#define TST_DIJKSTRA_ALL
 
 #define TST_A_STAR
 
@@ -97,13 +97,13 @@ int main() {
 	}
 #endif
 	/*-------- Dikstra All --------*/
-#ifdef TST_DIKSTRA_ALL
+#ifdef TST_DIJKSTRA_ALL
 	{
 		std::cout << "=================================================" << std::endl;
 		std::cout << "[+] Lancement Dikstra ALL" << std::endl;
 		std::cout << "[i] Lancement depuis : " << VILLE_DEPART << std::endl;
 		auto t0 = std::chrono::high_resolution_clock::now();
-		std::vector<double> vecRes = G.DikstraAll(SOMMET_DEPART);
+		std::vector<double> vecRes = G.DijkstraAll(SOMMET_DEPART);
 		auto t1 = std::chrono::high_resolution_clock::now();
 
 		std::chrono::duration<float> fs = t1 - t0;
@@ -116,13 +116,13 @@ int main() {
 	}
 #endif
 	/*-------- Dikstra --------*/
-#ifdef TST_DIKSTRA
+#ifdef TST_DIJKSTRA
 	{
 		std::cout << "=================================================" << std::endl;
 		std::cout << "[+] Lancement Dikstra" << std::endl;
 		std::cout << "[i] Lancement sur " << VILLE_DEPART << " - " << VILLE_ARRIVEE << std::endl;
 		auto t0 = std::chrono::high_resolution_clock::now();
-		double dist = G.Dikstra(SOMMET_DEPART, SOMMET_ARRIVEE);
+		double dist = G.Dijkstra(SOMMET_DEPART, SOMMET_ARRIVEE);
 		auto t1 = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<float> fs = t1 - t0;
 		std::cout << "[i] distance trouvee : " << dist << " km" << std::endl;
@@ -130,13 +130,13 @@ int main() {
 	}
 #endif
 	/*-------- Dikstra 2 --------*/
-#ifdef TST_DIKSTRA2
+#ifdef TST_DIJKSTRA2
 	{
 		std::cout << "=================================================" << std::endl;
 		std::cout << "[+] Lancement Dikstra V2" << std::endl;
 		std::cout << "[i] Lancement sur " << VILLE_DEPART << " - " << VILLE_ARRIVEE << std::endl;
 		auto t0 = std::chrono::high_resolution_clock::now();
-		double dist = G.Dikstra2(SOMMET_DEPART, SOMMET_ARRIVEE);
+		double dist = G.Dijkstra2(SOMMET_DEPART, SOMMET_ARRIVEE);
 		auto t1 = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<float> fs = t1 - t0;
 		std::cout << "[i] distance trouvee : " << dist << " km" << std::endl;
@@ -144,13 +144,13 @@ int main() {
 	}
 #endif
 	/*-------- Dikstra Heap --------*/
-#ifdef TST_DIKSTRA_HEAP
+#ifdef TST_DIJKSTRA_HEAP
 	{
 		std::cout << "=================================================" << std::endl;
 		std::cout << "[+] Lancement Dikstra avec Priority Queue" << std::endl;
 		std::cout << "[i] Lancement sur " << VILLE_DEPART << " - " << VILLE_ARRIVEE << std::endl;
 		auto t0 = std::chrono::high_resolution_clock::now();
-		double dist = G.DikstraHeap(SOMMET_DEPART, SOMMET_ARRIVEE);
+		double dist = G.DijkstraHeap(SOMMET_DEPART, SOMMET_ARRIVEE);
 		auto t1 = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<float> fs = t1 - t0;
 		std::cout << "[i] distance trouvee : " << dist << " km" << std::endl;

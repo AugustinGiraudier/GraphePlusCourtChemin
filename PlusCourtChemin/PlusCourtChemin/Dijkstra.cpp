@@ -1,6 +1,6 @@
 #include "Graphe.h"
 
-std::vector<double> Graphe::DikstraAll(unsigned int v1)
+std::vector<double> Graphe::DijkstraAll(unsigned int v1)
 {
 	std::vector<std::pair<double, int>> Z;
 	std::vector<double> lambda(listeSommets.size(), DOUBLE_MAX);
@@ -43,7 +43,7 @@ std::vector<double> Graphe::DikstraAll(unsigned int v1)
 	return lambda;
 }
 
-double Graphe::Dikstra(unsigned int v1, unsigned int v2)
+double Graphe::Dijkstra(unsigned int v1, unsigned int v2)
 {
 
 	// vecteur de retour lambda :
@@ -108,7 +108,7 @@ double Graphe::Dikstra(unsigned int v1, unsigned int v2)
 	return -1;
 }
 
-double Graphe::DikstraHeap(unsigned int v1, unsigned int v2)
+double Graphe::DijkstraHeap(unsigned int v1, unsigned int v2)
 {
 	std::priority_queue< std::pair<double, int>, std::vector<std::pair<double, int>>, std::greater<std::pair<double, int>>> heap;
 
@@ -141,7 +141,7 @@ double Graphe::DikstraHeap(unsigned int v1, unsigned int v2)
 	return lambda[v2];
 }
 
-double Graphe::Dikstra2(unsigned int v1, unsigned int v2)
+double Graphe::Dijkstra2(unsigned int v1, unsigned int v2)
 {
 	std::vector<std::pair<double, int>> Z;
 	std::vector<double> lambda(listeSommets.size(), DOUBLE_MAX);

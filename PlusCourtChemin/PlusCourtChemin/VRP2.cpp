@@ -23,7 +23,7 @@ std::vector<int> Graphe::VRP2(unsigned int nbMinHab, std::string strCsvFileName)
 		int index = -1;
 
 		for (int val : ListvillesSelect) {
-			double res = DikstraHeap(chemin[chemin.size() - 1], val);
+			double res = DijkstraHeap(chemin[chemin.size() - 1], val);
 			if (res < min) {
 				min = res;
 				index = val;
@@ -60,9 +60,9 @@ std::vector<int> Graphe::VRP2v2(unsigned int nbMinHab, std::string strCsvFileNam
 			int villeA = *it;
 			int villeB = (it2 == chemin.end()) ? 0 : *(it2);
 
-			double a = DikstraHeap(villeA, villesSelect[iVille]);
-			double b = DikstraHeap(villesSelect[iVille], villeB);
-			double c = DikstraHeap(villeA, villeB);
+			double a = DijkstraHeap(villeA, villesSelect[iVille]);
+			double b = DijkstraHeap(villesSelect[iVille], villeB);
+			double c = DijkstraHeap(villeA, villeB);
 			double circuitlen = cheminLen + a + b - c;
 
 			std::advance(it, 1);
@@ -91,12 +91,12 @@ double Graphe::GetCircuitLength(const std::list<int>& circuit)
 	while (it2 != circuit.end()) {
 		int iVille = *it;
 		int iVille2 = *it2;
-		res += DikstraHeap(iVille, iVille2);
+		res += DijkstraHeap(iVille, iVille2);
 		std::advance(it, 1);
 		std::advance(it2, 1);
 	}
 
-	res += DikstraHeap(circuit.back(), circuit.front());
+	res += DijkstraHeap(circuit.back(), circuit.front());
 
 	return res;
 }

@@ -64,7 +64,7 @@ Vertex* Graphe::VRP1v2(unsigned int nbMinHab, std::string strCsvFileName)
 	std::vector<double> vecRes(this->listeSommets.size());
 
 	for (int iVille = 0; iVille < villesSelect.size(); iVille++) {
-		std::vector<double> res = this->DikstraAll(villesSelect[iVille]);
+		std::vector<double> res = this->DijkstraAll(villesSelect[iVille]);
 		for (int i = 0; i < res.size(); i++)
 			vecRes[i] += res[i];
 	}
@@ -87,7 +87,7 @@ void Graphe::VRP1computeNCities(int iVille, int nbCityPerThread, const std::vect
 		double currentSum = 0;
 
 		for (int i_grandeVille = 0; i_grandeVille < villesSelect.size();i_grandeVille++) {
-			currentSum += this->DikstraHeap(iVille, villesSelect[i_grandeVille]);
+			currentSum += this->DijkstraHeap(iVille, villesSelect[i_grandeVille]);
 		}
 
 		double avg = currentSum / villesSelect.size();
