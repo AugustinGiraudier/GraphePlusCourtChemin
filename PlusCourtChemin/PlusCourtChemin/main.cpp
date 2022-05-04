@@ -7,18 +7,18 @@
 
 // commentez les tests que vous ne voulez pas lancer :
 
-#define VRP_1_1
-#define VRP_1_2
+#define TST_VRP_1_1
+#define TST_VRP_1_2
 
-#define VRP_2_1
-#define VRP_2_2
+#define TST_VRP_2_1
+#define TST_VRP_2_2
 
-#define DIKSTRA
-#define DIKSTRA2
-#define DIKSTRA_HEAP
-#define DIKSTRA_ALL
+#define TST_DIKSTRA
+#define TST_DIKSTRA2
+#define TST_DIKSTRA_HEAP
+#define TST_DIKSTRA_ALL
 
-#define A_STAR
+#define TST_A_STAR
 
 
 int main() {
@@ -39,7 +39,7 @@ int main() {
 	const unsigned int SOMMET_ARRIVEE = G.getIndexWithName(VILLE_ARRIVEE);
 
 	/*-------- VRP 1 --------*/
-#ifdef VRP_1_1
+#ifdef TST_VRP_1_1
 	{
 		std::cout << "=================================================" << std::endl;
 		std::cout << "[+] Lancement VRP 1 Brute Force" << std::endl;
@@ -52,7 +52,7 @@ int main() {
 	}
 #endif
 	/*-------- VRP 1 V2 --------*/
-#ifdef VRP_1_2
+#ifdef TST_VRP_1_2
 	{
 		std::cout << "=================================================" << std::endl;
 		std::cout << "[+] Lancement VRP 1 Intelligent" << std::endl;
@@ -65,7 +65,7 @@ int main() {
 	}
 #endif	
 	/*-------- VRP 2 --------*/
-#ifdef VRP_2_1
+#ifdef TST_VRP_2_1
 	{
 		std::cout << "=================================================" << std::endl;
 		std::cout << "[+] Lancement VRP 2 Proximite" << std::endl;
@@ -81,7 +81,7 @@ int main() {
 	}	
 #endif
 	/*-------- VRP 2 v2 --------*/
-#ifdef VRP_2_2
+#ifdef TST_VRP_2_2
 	{
 		std::cout << "=================================================" << std::endl;
 		std::cout << "[+] Lancement VRP 2 Boucle" << std::endl;
@@ -97,7 +97,7 @@ int main() {
 	}
 #endif
 	/*-------- Dikstra All --------*/
-#ifdef DIKSTRA_ALL
+#ifdef TST_DIKSTRA_ALL
 	{
 		std::cout << "=================================================" << std::endl;
 		std::cout << "[+] Lancement Dikstra ALL" << std::endl;
@@ -116,7 +116,7 @@ int main() {
 	}
 #endif
 	/*-------- Dikstra --------*/
-#ifdef DIKSTRA
+#ifdef TST_DIKSTRA
 	{
 		std::cout << "=================================================" << std::endl;
 		std::cout << "[+] Lancement Dikstra" << std::endl;
@@ -130,7 +130,7 @@ int main() {
 	}
 #endif
 	/*-------- Dikstra 2 --------*/
-#ifdef DIKSTRA2
+#ifdef TST_DIKSTRA2
 	{
 		std::cout << "=================================================" << std::endl;
 		std::cout << "[+] Lancement Dikstra V2" << std::endl;
@@ -144,7 +144,7 @@ int main() {
 	}
 #endif
 	/*-------- Dikstra Heap --------*/
-#ifdef DIKSTRA_HEAP
+#ifdef TST_DIKSTRA_HEAP
 	{
 		std::cout << "=================================================" << std::endl;
 		std::cout << "[+] Lancement Dikstra avec Priority Queue" << std::endl;
@@ -158,7 +158,7 @@ int main() {
 	}
 #endif
 	/*-------- A* --------*/
-#ifdef A_STAR
+#ifdef TST_A_STAR
 	{
 		std::cout << "=================================================" << std::endl;
 		std::cout << "[+] Lancement A Etoile" << std::endl;
