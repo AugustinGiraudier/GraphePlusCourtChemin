@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Fichiers sources\Algos">
+      <UniqueIdentifier>{d173311d-f26b-4ac5-baf2-eb27fe2c3569}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Edge.h">
@@ -37,6 +40,18 @@
     </ClCompile>
     <ClCompile Include="Vertex.cpp">
       <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Dikstra.cpp">
+      <Filter>Fichiers sources\Algos</Filter>
+    </ClCompile>
+    <ClCompile Include="AStar.cpp">
+      <Filter>Fichiers sources\Algos</Filter>
+    </ClCompile>
+    <ClCompile Include="VRP1.cpp">
+      <Filter>Fichiers sources\Algos</Filter>
+    </ClCompile>
+    <ClCompile Include="VRP2.cpp">
+      <Filter>Fichiers sources\Algos</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

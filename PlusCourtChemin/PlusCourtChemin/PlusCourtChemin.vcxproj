@@ -144,10 +144,14 @@
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AStar.cpp" />
+    <ClCompile Include="Dikstra.cpp" />
     <ClCompile Include="Edge.cpp" />
     <ClCompile Include="Graphe.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Vertex.cpp" />
+    <ClCompile Include="VRP1.cpp" />
+    <ClCompile Include="VRP2.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
