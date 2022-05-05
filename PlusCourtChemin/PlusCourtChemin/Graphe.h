@@ -88,7 +88,7 @@ private:
 		@param minAverage : plus basse moyenne enregistrée
 		@param index : index de la plus basse moyenne enregistrée
 	*/
-	void VRP1computeNCities(int iVille, int nbCityPerThread, const std::vector<int>& villesSelect, double& minAverage, int& index);
+	void VRP1computeNCities(int iVille, int nbCityPerThread, const std::vector<int>& villesSelect, double& min, int& index);
 
 	/*
 		Retourne les villes ayant plus d'habitants que le nombre indiqué
@@ -112,7 +112,9 @@ private:
 public:
 
 	// ----- METHODES PUBLIQUES ----- //
+
 	int getNbSommet() { return listeSommets.size(); }
+	int getNbArc() { return this->nbArcs; }
 	/*
 		Crée le graphe à l'aide du fichier de configuration du graphe
 

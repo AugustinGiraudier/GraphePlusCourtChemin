@@ -5,46 +5,54 @@
 #include <chrono>
 #include <thread>
 
+// ============================================ //
+//		Choix des tests							//
+// ============================================ //
 // commentez les tests que vous ne voulez pas lancer :
 
-//#define TST_VRP_1_1
-//#define TST_VRP_1_2
 
-//#define TST_VRP_2_1
-//#define TST_VRP_2_2
+//#define TST_DISTANCES_MOYENNES_BF
+//#define TST_DISTANCES_MOYENNES_INVERSE
+
+//#define TST_CYCLE_LOCAL
+//#define TST_CYCLE_AJOUT_BOUCLE
 
 #define TST_DIJKSTRA
 //#define TST_DIJKSTRA_ALL
-#define TST_DIJKSTRA_HEAP
+#define TST_DIJKSTRA_PRIORITY_QUEUE
 
-#define TST_A_STAR
+#define TST_A_ETOILE
 
 
 int main() {
 
-	const std::string GRAPHES_ROOT = "../../InputGraphes/";
+	// ============================================ //
+	//		Variables modifiables					//
+	// ============================================ //
+
 	const std::string VILLE_DEPART = "nantes";
 	const std::string VILLE_ARRIVEE = "marseille";
-	const unsigned int MAX_AFFICHAGE = 25;
-	const unsigned int NB_HABITANTS_GRANDE_VILLE_VRP_1 = 200000;
-	const unsigned int NB_HABITANTS_GRANDE_VILLE_VRP_2 = 100000;
+	const unsigned int NB_HABITANTS_GRANDE_VILLE_DISTANCES_MOYENNES = 200000;
+	const unsigned int NB_HABITANTS_GRANDE_VILLE_CYCLES = 100000;
 
-	//Graphe G = Graphe(GRAPHES_ROOT + "CommunesFrance_5000.tgoGraph");
-	//Graphe G = Graphe(GRAPHES_ROOT + "Graphe_01.tgoGraph");
+	const std::string GRAPHES_ROOT = "../../InputGraphes/";
 	//Graphe G = Graphe(GRAPHES_ROOT + "CommunesFrance_5000coord.tgoGraph");
 	Graphe G = Graphe(GRAPHES_ROOT + "CommunesFrance_10000coord.tgoGraph");
+
+	// ============================================ //
+	//		Début des tests							//
+	// ============================================ //
 
 	const unsigned int SOMMET_DEPART = G.getIndexWithName(VILLE_DEPART);
 	const unsigned int SOMMET_ARRIVEE = G.getIndexWithName(VILLE_ARRIVEE);
 
-
 	/*-------- VRP 1 --------*/
-#ifdef TST_VRP_1_1
+#ifdef TST_DISTANCES_MOYENNES_BF
 	{
 		std::cout << "=================================================" << std::endl;
 		std::cout << "[+] Lancement VRP 1 Brute Force" << std::endl;
 		auto t0 = std::chrono::high_resolution_clock::now();
-		std::string nom = G.VRP1(NB_HABITANTS_GRANDE_VILLE_VRP_1, GRAPHES_ROOT + "CommunesFrance.csv")->nom;
+		std::string nom = G.VRP1(NB_HABITANTS_GRANDE_VILLE_DISTANCES_MOYENNES, GRAPHES_ROOT + "CommunesFrance.csv")->nom;
 		auto t1 = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<float> fs = t1 - t0;
 		std::cout << "[i] ville trouvee : " << nom << std::endl;
@@ -52,12 +60,12 @@ int main() {
 	}
 #endif
 	/*-------- VRP 1 V2 --------*/
-#ifdef TST_VRP_1_2
+#ifdef TST_DISTANCES_MOYENNES_INVERSE
 	{
 		std::cout << "=================================================" << std::endl;
 		std::cout << "[+] Lancement VRP 1 Intelligent" << std::endl;
 		auto t0 = std::chrono::high_resolution_clock::now();
-		std::string nom = G.VRP1v2(NB_HABITANTS_GRANDE_VILLE_VRP_1, GRAPHES_ROOT + "CommunesFrance.csv")->nom;
+		std::string nom = G.VRP1v2(NB_HABITANTS_GRANDE_VILLE_DISTANCES_MOYENNES, GRAPHES_ROOT + "CommunesFrance.csv")->nom;
 		auto t1 = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<float> fs = t1 - t0;
 		std::cout << "[i] ville trouvee : " << nom << std::endl;
@@ -65,12 +73,12 @@ int main() {
 	}
 #endif	
 	/*-------- VRP 2 --------*/
-#ifdef TST_VRP_2_1
+#ifdef TST_CYCLE_LOCAL
 	{
 		std::cout << "=================================================" << std::endl;
 		std::cout << "[+] Lancement VRP 2 Proximite" << std::endl;
 		auto t0 = std::chrono::high_resolution_clock::now();
-		std::vector<int> vec = G.VRP2(NB_HABITANTS_GRANDE_VILLE_VRP_2, GRAPHES_ROOT + "communesfrance.csv");
+		std::vector<int> vec = G.VRP2(NB_HABITANTS_GRANDE_VILLE_CYCLES, GRAPHES_ROOT + "communesfrance.csv");
 		auto t1 = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<float> fs = t1 - t0;
 		std::cout << "[i] villes trouvees : " << std::endl;
@@ -81,12 +89,12 @@ int main() {
 	}	
 #endif
 	/*-------- VRP 2 v2 --------*/
-#ifdef TST_VRP_2_2
+#ifdef TST_CYCLE_AJOUT_BOUCLE
 	{
 		std::cout << "=================================================" << std::endl;
 		std::cout << "[+] Lancement VRP 2 Boucle" << std::endl;
 		auto t0 = std::chrono::high_resolution_clock::now();
-		std::vector<int> vec = G.VRP2v2(NB_HABITANTS_GRANDE_VILLE_VRP_2, GRAPHES_ROOT + "CommunesFrance.csv");
+		std::vector<int> vec = G.VRP2v2(NB_HABITANTS_GRANDE_VILLE_CYCLES, GRAPHES_ROOT + "CommunesFrance.csv");
 		auto t1 = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<float> fs = t1 - t0;
 		std::cout << "[i] villes trouvees : " << std::endl;
@@ -130,7 +138,7 @@ int main() {
 	}
 #endif
 	/*-------- Dikstra Heap --------*/
-#ifdef TST_DIJKSTRA_HEAP
+#ifdef TST_DIJKSTRA_PRIORITY_QUEUE
 	{
 		std::cout << "=================================================" << std::endl;
 		std::cout << "[+] Lancement Dikstra avec Priority Queue" << std::endl;
@@ -144,7 +152,7 @@ int main() {
 	}
 #endif
 	/*-------- A* --------*/
-#ifdef TST_A_STAR
+#ifdef TST_A_ETOILE
 	{
 		std::cout << "=================================================" << std::endl;
 		std::cout << "[+] Lancement A Etoile" << std::endl;
@@ -157,8 +165,6 @@ int main() {
 		std::cout << "[i] temps d'execution : " << std::chrono::duration_cast<std::chrono::milliseconds>(fs).count() << " ms" << std::endl;
 	}
 #endif
-
-	//getchar();
 
 	return 0;
 }

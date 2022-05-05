@@ -8,10 +8,10 @@ Vertex* Graphe::VRP1(unsigned int nbMinHab, std::string strCsvFileName)
 	struct threadReturn {
 		std::thread* th = nullptr;
 		int index = -1;
-		double minAvg = DOUBLE_MAX;
+		double distMin = DOUBLE_MAX;
 	};
 
-	const unsigned int NB_THREAD = std::thread::hardware_concurrency();
+	const unsigned int NB_THREAD = /*std::thread::hardware_concurrency()*/1;
 
 	std::cout << "[i] lancement sur " << NB_THREAD << " threads..." << std::endl;
 
@@ -27,21 +27,21 @@ Vertex* Graphe::VRP1(unsigned int nbMinHab, std::string strCsvFileName)
 	// pour chaque thread :
 	for (unsigned int iThread = 0; iThread < NB_THREAD; iThread++) {
 		threadReturn* tr = new threadReturn{};
-		tr->th = new std::thread(&Graphe::VRP1computeNCities, this, iVille, nbCityPerThread, villesSelect, std::ref(tr->minAvg), std::ref(tr->index));
+		tr->th = new std::thread(&Graphe::VRP1computeNCities, this, iVille, nbCityPerThread, villesSelect, std::ref(tr->distMin), std::ref(tr->index));
 		//computeNCities(iVille, nbCityPerThread, villesSelect, tr->minAvg, tr->index);
 		tabThread.emplace_back(tr);
 		iVille += nbCityPerThread;
 	}
 	// dernier thread :
-	double minAverage = DOUBLE_MAX;
+	double min = DOUBLE_MAX;
 	int index = -1;
-	VRP1computeNCities(iVille, nbCityForLastThread, villesSelect, minAverage, index);
+	VRP1computeNCities(iVille, nbCityForLastThread, villesSelect, min, index);
 
 	// recuperation des threads, traitement et clean memoire :
 	for (threadReturn* tr : tabThread) {
 		tr->th->join();
-		if (tr->minAvg < minAverage) {
-			minAverage = tr->minAvg;
+		if (tr->distMin < min) {
+			min = tr->distMin;
 			index = tr->index;
 		}
 		delete tr->th;
@@ -49,9 +49,11 @@ Vertex* Graphe::VRP1(unsigned int nbMinHab, std::string strCsvFileName)
 	}
 
 	if (index == -1) {
-		std::cerr << "Erreur de lecture des donnees csv...";
+		std::cerr << "[X] Erreur de lecture des donnees csv...";
 		exit(1);
 	}
+
+	std::cout << "[i] distance moyenne des trajets : " << min / villesSelect.size() << " km" << std::endl;
 
 	return &listeSommets[index];
 }
@@ -78,10 +80,12 @@ Vertex* Graphe::VRP1v2(unsigned int nbMinHab, std::string strCsvFileName)
 			iMin = i;
 		}
 
+	std::cout << "[i] distance moyenne des trajets : " << min/villesSelect.size() << " km" << std::endl;
+
 	return &this->listeSommets[iMin];
 }
 
-void Graphe::VRP1computeNCities(int iVille, int nbCityPerThread, const std::vector<int>& villesSelect, double& minAverage, int& index) {
+void Graphe::VRP1computeNCities(int iVille, int nbCityPerThread, const std::vector<int>& villesSelect, double& min, int& index) {
 	int end = iVille + nbCityPerThread;
 	for (; iVille < end; iVille++) {
 		double currentSum = 0;
@@ -90,9 +94,8 @@ void Graphe::VRP1computeNCities(int iVille, int nbCityPerThread, const std::vect
 			currentSum += this->DijkstraHeap(iVille, villesSelect[i_grandeVille]);
 		}
 
-		double avg = currentSum / villesSelect.size();
-		if (avg < minAverage) {
-			minAverage = avg;
+		if (currentSum < min) {
+			min = currentSum;
 			index = iVille;
 		}
 	}

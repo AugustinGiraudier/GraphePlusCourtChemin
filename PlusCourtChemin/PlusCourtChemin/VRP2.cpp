@@ -58,7 +58,7 @@ std::vector<int> Graphe::VRP2v2(unsigned int nbMinHab, std::string strCsvFileNam
 		while (it != chemin.end()) {
 
 			int villeA = *it;
-			int villeB = (it2 == chemin.end()) ? 0 : *(it2);
+			int villeB = (it2 == chemin.end()) ? *(chemin.begin()) : *(it2);
 
 			double a = DijkstraHeap(villeA, villesSelect[iVille]);
 			double b = DijkstraHeap(villesSelect[iVille], villeB);

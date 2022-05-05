@@ -5,7 +5,7 @@ Graphe::Graphe(std::string filePath) {
 	std::ifstream is(filePath);
 
 	if (!is.is_open()) {
-		std::cerr << "impossible d'ouvrir le fichier...";
+		std::cerr << "[X] impossible d'ouvrir le fichier tograph...";
 		exit(1);
 	}
 
@@ -74,7 +74,7 @@ std::vector<int> Graphe::getCitiesWithMorePeopleThan(unsigned int nbMinHab, std:
 	std::ifstream is(filename);
 
 	if (!is.is_open()) {
-		std::cerr << "impossible d'ouvrir le fichier...";
+		std::cerr << "[X] impossible d'ouvrir le fichier csv...";
 		exit(1);
 	}
 
@@ -130,7 +130,9 @@ int Graphe::getIndexWithName(std::string strCityName)
 	for (int iVille = 0; iVille < listeSommets.size(); iVille++)
 		if (listeSommets[iVille].nom == strCityName)
 			return iVille;
-	return -1;
+
+	std::cout << "[X] La ville '" << strCityName << "' n'a pas pu etre trouvée..." << std::endl;
+	exit(EXIT_FAILURE);
 }
 
 void Graphe::Afficher(int nbMax)
