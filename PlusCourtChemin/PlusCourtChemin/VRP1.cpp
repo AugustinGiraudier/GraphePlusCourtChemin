@@ -11,7 +11,7 @@ Vertex* Graphe::VRP1(unsigned int nbMinHab, std::string strCsvFileName)
 		double distMin = DOUBLE_MAX;
 	};
 
-	const unsigned int NB_THREAD = /*std::thread::hardware_concurrency()*/1;
+	const unsigned int NB_THREAD = std::thread::hardware_concurrency();
 
 	std::cout << "[i] lancement sur " << NB_THREAD << " threads..." << std::endl;
 
